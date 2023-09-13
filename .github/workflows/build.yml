@@ -36,4 +36,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: exe
-        path: ${{ github.workspace }}/dist/main  # 使用绝对路径上传exe文件
+        path: ${{ github.workspace }}/dist  # 使用绝对路径上传exe文件
