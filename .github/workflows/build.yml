@@ -30,9 +30,7 @@ jobs:
       run: python3.10 -m pip install pyinstaller
 
     - name: Build exe
-      run: |
-        cd $GITHUB_WORKSPACE/spDNS  # 使用 $GITHUB_WORKSPACE 变量
-        pyinstaller --onefile main.py
+      run: pyinstaller --onefile main.py
 
     - name: Upload exe
       uses: actions/upload-artifact@v2
