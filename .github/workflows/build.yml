@@ -7,33 +7,28 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest  # 切换到 Windows 环境
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2  # 将仓库内容检出到工作目录
 
     - name: Set up Python 3.10
-      run: |
-        curl -L -o python.tar.gz https://www.python.org/ftp/python/3.10.0/Python-3.10.0.tgz
-        tar xf python.tar.gz
-        cd Python-3.10.0
-        ./configure --enable-optimizations --prefix=$HOME/python-3.10
-        make altinstall
-        echo 'export PATH=$HOME/python-3.10/bin:$PATH' >> $HOME/.bashrc
-      shell: bash
+      uses: actions/setup-python@v2  # 使用官方的 Python Action
+      with:
+        python-version: 3.10
 
     - name: Install PyInstaller
-      run: python3.10 -m pip install pyinstaller
+      run: python -m pip install pyinstaller
 
     - name: Build exe
       run: pyinstaller --onefile main.py
 
     - name: List files in dist directory
-      run: ls -al $GITHUB_WORKSPACE/dist
+      run: dir /s $GITHUB_WORKSPACE\dist  # 列出 dist 文件夹中的文件
 
     - name: Upload exe
       uses: actions/upload-artifact@v2
       with:
         name: exe
-        path: ${{ github.workspace }}/dist  # 使用绝对路径上传exe文件
+        path: ${{ github.workspace }}\dist  # 使用绝对路径上传 exe 文件
