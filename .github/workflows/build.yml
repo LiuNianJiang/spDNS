@@ -15,14 +15,16 @@ jobs:
         curl -L -o python.tar.gz https://www.python.org/ftp/python/3.10.0/Python-3.10.0.tgz
         tar xf python.tar.gz
         cd Python-3.10.0
-        ./configure --enable-optimizations
+        ./configure --enable-optimizations --prefix=$HOME/python-3.10
         make altinstall
+        echo 'export PATH=$HOME/python-3.10/bin:$PATH' >> $HOME/.bashrc
+      shell: bash
 
     - name: Install PyInstaller
       run: python3.10 -m pip install pyinstaller
 
     - name: Build exe
-      run: pyinstaller --onefile your_script.py
+      run: pyinstaller --onefile main.py  # 替换为你的脚本名称
 
     - name: Upload exe
       uses: actions/upload-artifact@v2
