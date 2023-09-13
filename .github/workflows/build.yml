@@ -24,7 +24,9 @@ jobs:
       run: python3.10 -m pip install pyinstaller
 
     - name: Build exe
-      run: pyinstaller --onefile main.py 
+      run: |
+        cd /github/workspace/spDNS  
+        pyinstaller --onefile main.py
 
     - name: Upload exe
       uses: actions/upload-artifact@v2
