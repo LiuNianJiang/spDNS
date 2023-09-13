@@ -14,4 +14,28 @@ jobs:
       uses: actions/checkout@v2  # 将仓库内容检出到工作目录
 
     - name: List files and directories in workspace
-      run: ls -al /github/workspace  # 列出工作目录的内容
+      run: ls -al $GITHUB_WORKSPACE  # 使用 $GITHUB_WORKSPACE 变量
+
+    - name: Set up Python 3.10
+      run: |
+        curl -L -o python.tar.gz https://www.python.org/ftp/python/3.10.0/Python-3.10.0.tgz
+        tar xf python.tar.gz
+        cd Python-3.10.0
+        ./configure --enable-optimizations --prefix=$HOME/python-3.10
+        make altinstall
+        echo 'export PATH=$HOME/python-3.10/bin:$PATH' >> $HOME/.bashrc
+      shell: bash
+
+    - name: Install PyInstaller
+      run: python3.10 -m pip install pyinstaller
+
+    - name: Build exe
+      run: |
+        cd $GITHUB_WORKSPACE/spDNS  # 使用 $GITHUB_WORKSPACE 变量
+        pyinstaller --onefile main.py
+
+    - name: Upload exe
+      uses: actions/upload-artifact@v2
+      with:
+        name: exe
+        path: $GITHUB_WORKSPACE/spDNS/dist  # 使用 $GITHUB_WORKSPACE 变量
