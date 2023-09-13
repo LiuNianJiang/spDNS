@@ -1,9 +1,9 @@
 import requests
 
 # 定义远程版本号的URL
-version_url = "https://example.com/version.txt"
-# 定义hosts文件路径（Windows系统可能是 C:\Windows\System32\drivers\etc\hosts）
-hosts_file_path = "/etc/hosts"
+version_url = "https://www.huang1111.cn/test.txt"
+# 定义hosts文件路径
+hosts_file_path = "C:\Windows\System32\drivers\etc\hosts"
 
 # 获取远程版本号
 def get_remote_version():
