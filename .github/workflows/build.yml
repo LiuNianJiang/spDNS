@@ -24,7 +24,7 @@ jobs:
       run: python3.10 -m pip install pyinstaller
 
     - name: Build exe
-      run: pyinstaller --onefile main.py  # 替换为你的脚本名称
+      run: pyinstaller --onefile main.py 
 
     - name: Upload exe
       uses: actions/upload-artifact@v2
