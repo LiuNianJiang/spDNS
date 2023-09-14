@@ -1,6 +1,6 @@
 import requests
 
-# Define the URL for remote version
+# Define the URL for remote version.
 version_url = "https://www.huang1111.cn/test.txt"
 # Define the hosts file path
 hosts_file_path = "C:\Windows\System32\drivers\etc\hosts"
