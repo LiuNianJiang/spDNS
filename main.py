@@ -1,9 +1,14 @@
+import logging
+import os
 import requests
 
 # Define the URL for remote version.
 version_url = "https://www.huang1111.cn/test.txt"
 # Define the hosts file path
 hosts_file_path = "C:\Windows\System32\drivers\etc\hosts"
+
+# Set up logging
+logging.basicConfig(filename=os.path.join(os.getcwd(), 'log.txt'), level=logging.INFO)
 
 # Get the remote version
 def get_remote_version():
@@ -12,7 +17,7 @@ def get_remote_version():
         response.raise_for_status()
         return response.text.strip()
     except requests.exceptions.RequestException as e:
-        print(f"Failed to retrieve remote version: {e}")
+        logging.error(f"Failed to retrieve remote version: {e}")
         return None
 
 # Get the local version
@@ -24,6 +29,7 @@ def get_local_version():
                     return line.strip()[10:]
         return None
     except FileNotFoundError:
+        logging.error("Hosts file not found")
         return None
 
 # Sync and override the parsing rules
@@ -39,11 +45,11 @@ def sync_hosts():
                 hosts_file.write("# Add your custom host rules here\n")
                 hosts_file.write("# End of the section\n")
 
-            print("Hosts file updated")
+            logging.info("Hosts file updated")
         except PermissionError:
-            print("Failed to write to the hosts file, ensure you have administrator privileges")
+            logging.error("Failed to write to the hosts file, ensure you have administrator privileges")
     else:
-        print("Hosts file is up to date")
+        logging.info("Hosts file is up to date")
 
 if __name__ == "__main__":
     sync_hosts()
