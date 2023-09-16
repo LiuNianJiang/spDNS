@@ -1,55 +1,64 @@
-import logging
-import os
-import requests
-
-# Define the URL for remote version.
-version_url = "https://www.huang1111.cn/test.txt"
-# Define the hosts file path
-hosts_file_path = "C:\Windows\System32\drivers\etc\hosts"
-
-# Set up logging
-logging.basicConfig(filename=os.path.join(os.getcwd(), 'log.txt'), level=logging.INFO)
-
-# Get the remote version
-def get_remote_version():
-    try:
-        response = requests.get(version_url)
-        response.raise_for_status()
-        return response.text.strip()
-    except requests.exceptions.RequestException as e:
-        logging.error(f"Failed to retrieve remote version: {e}")
-        return None
-
-# Get the local version
-def get_local_version():
-    try:
-        with open(hosts_file_path, "r") as hosts_file:
-            for line in hosts_file:
-                if line.startswith("# Version:"):
-                    return line.strip()[10:]
-        return None
-    except FileNotFoundError:
-        logging.error("Hosts file not found")
-        return None
-
-# Sync and override the parsing rules
-def sync_hosts():
-    remote_version = get_remote_version()
-    local_version = get_local_version()
-
-    if remote_version and local_version != remote_version:
-        try:
-            with open(hosts_file_path, "w") as hosts_file:
-                hosts_file.write("# Version: " + remote_version + "\n")
-                hosts_file.write("# Start of the section\n")
-                hosts_file.write("# Add your custom host rules here\n")
-                hosts_file.write("# End of the section\n")
-
-            logging.info("Hosts file updated")
-        except PermissionError:
-            logging.error("Failed to write to the hosts file, ensure you have administrator privileges")
-    else:
-        logging.info("Hosts file is up to date")
-
-if __name__ == "__main__":
-    sync_hosts()
+import os  
+import requests  
+import shutil  
+  
+def request_admin():  
+    # 请求管理员权限  
+    if os.name == 'nt':  
+        if not os.getuid() == 0:  
+            print("请使用管理员权限运行此程序")  
+            os.system('pause')  
+            exit(1)  
+  
+def get_url_content(url):  
+    # 从URL获取内容  
+    response = requests.get(url)  
+    return response.text  
+  
+def check_hosts_file(content):  
+    # 检查hosts文件是否存在以及是否包含特定内容  
+    with open("C:\\Windows\\System32\\drivers\\etc\\hosts", "r") as file:  
+        hosts_content = file.read()  
+        if content in hosts_content:  
+            return True  
+    return False  
+  
+def update_hosts_file(content):  
+    # 更新hosts文件  
+    with open("C:\\Windows\\System32\\drivers\\etc\\hosts", "r") as file:  
+        hosts_content = file.read()  
+      
+    # 查找版本号  
+    version_pattern = re.compile(r"# ver:(\d+\.\d+\.\d+)")  
+    version_match = version_pattern.search(content)  
+    if version_match:  
+        version = version_match.group(1)  
+        # 检查版本号是否一致  
+        if "# ver:{}".format(version) in hosts_content:  
+            return False  
+        else:  
+            # 不一致，覆盖原先的内容  
+            with open("C:\\Windows\\System32\\drivers\\etc\\hosts", "w") as file:  
+                file.write(content)  
+            return True  
+    else:  
+        # 没有找到版本号，直接添加内容到hosts文件末尾  
+        with open("C:\\Windows\\System32\\drivers\\etc\\hosts", "a") as file:  
+            file.write("\n" + content)  
+        return True  
+  
+def main():  
+    # 请求管理员权限  
+    request_admin()  
+    # 获取URL内容  
+    url_content = get_url_content("https://www.huang1111.cn/hosts.txt")  
+    # 检查hosts文件是否存在以及是否包含特定内容  
+    if not check_hosts_file(url_content):  
+        # 如果不存在，更新hosts文件  
+        update_hosts_file(url_content)  
+        print("Hosts文件已成功更新！")  
+    else:  
+        print("Hosts文件无需更新！")  
+  
+if __name__ == "__main__":  
+    main()
